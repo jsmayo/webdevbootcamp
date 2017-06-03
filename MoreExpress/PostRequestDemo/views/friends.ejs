@@ -1,0 +1,15 @@
+<h1>Friends go here</h1>
+<!--take the friend the loop is on and place it in a list -->
+<% friends.forEach(function(friend) { %>
+   <li> <%= friend  %> </li>
+<% }) %>
+
+<!--Added a form and button to sumit the new friend via text input. The form
+    submits to the /addfriend directory, where app.js has a method for creating
+    a new friend and adding it to the friends array. 
+    
+    The name=newFriend must match the argument in app.js's /addfriend post
+    method, otherwise it will fail.-->
+<form action="/addfriend" method="POST">
+    <input type="text" placeholder="name" name="newFriend"><button> New Friend</button>
+</form>
