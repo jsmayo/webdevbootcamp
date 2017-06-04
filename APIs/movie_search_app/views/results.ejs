@@ -1,0 +1,19 @@
+<h1>Results Page:</h1>
+<!-- Using a forEach loop to access the API's results. Recall that the 
+        results are returned in an array called Search = [ ... ], which is
+        why I use data (the results parsed by JSON from app.js and pass in
+        "Title".
+            Output:
+                40 Years: StarWars & ILM
+                The StarWars Adventures
+                The StarWars Adventures: Project Blackwing
+-->
+<% data["Search"].forEach(function(movie) { %> 
+<li>
+    <strong>
+        <%= movie["Title"] %>
+    </strong> 
+    - <%= movie["Year"] %> 
+</li>
+<% }) %>
+<a href="/">Search Again</a>
