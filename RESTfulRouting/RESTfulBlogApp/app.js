@@ -32,12 +32,23 @@ Used to test initial server start-up
         })
 */
 
-// ROUTES
-app.get("/blogs", function(req, res) {
-    res.render("index");
+// RESTful ROUTES
+
+// Route redirection 
+app.get("/", function(req, res) {
+    res.redirect("/blogs");
 });
 
+// index page
+app.get("/blogs", function(req, res) {
+    Blog.find({}, function(err, blogs) {
+        if(err) console.log(err);
+        else  res.render("index", {blogs: blogs});
+    })
+});
 
+//show all entries
+app.get
 
 
 
