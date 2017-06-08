@@ -47,8 +47,21 @@ app.get("/blogs", function(req, res) {
     })
 });
 
-//show all entries
-app.get
+// NEW ROUTE
+app.get("/blogs/new", function(req, res) {
+   // You want the same form everytime you make a new post.
+   // Render the post template.
+    res.render("new");
+});
+
+// CREATE ROUTE
+app.post("/blogs", function(req, res) {
+    Blog.create(req.body.blog, function(err, newBlow) {
+        if(err) res.render("new");
+        else res.redirect("/blogs");
+            
+    })
+});
 
 
 
