@@ -1,8 +1,8 @@
 <% include ./partials/header %>
 
-<div class="ui main text container">
+<div class="ui main text container row" id="body-content">
     <div class="ui huge header">RESTful Blog App</div>
-    <div class="ui top  attached segment">
+    <div class="ui top  raised segment">
         <div class="ui divided items">
             <% blogs.forEach(function(blog){ %>
                 <div class="item">
@@ -18,9 +18,9 @@
                              <p><%- blog.body.substring(0, 100) %>...</p>
                          </div>
                          <div class="extra">
-                             <a class="ui black button right floated" href="/blogs/<%= blog._id %>">
-                                 Read More
-                                 <i class="right chevron icon"></i>
+                             <a class="ui tiny black right floated right labeled icon button" href="/blogs/<%= blog._id %>">
+                                <i class="right chevron icon"></i> Read More
+                                 <!--<i class="right chevron icon"></i>-->
                              </a>
                          </div>
                     </div>
@@ -31,3 +31,7 @@
 </div>
 
 <% include ./partials/footer %>
+<!--<button class="ui right labeled icon button">-->
+<!--  <i class="right arrow icon"></i>-->
+<!--  Next-->
+<!--</button>-->
