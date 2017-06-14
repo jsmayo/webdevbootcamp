@@ -22,12 +22,12 @@ app.get("/campgrounds", function(req, res) {
     // Get all campgrounds from DB
     Campground.find({}, function(err, allCampgrounds) {
         if(err) console.log(err);
-        else res.render("index", {campgrounds: allCampgrounds});
+        else res.render("campgrounds/index", {campgrounds: allCampgrounds});
     })
 })
 
 app.get("/campgrounds/new", function(req, res) {
-    res.render("new.ejs");
+    res.render("campgrounds/new");
 })
 
 
@@ -59,10 +59,28 @@ app.get("/campgrounds/:id", function(req, res) {
     //Find the campground with the provided ID.
     Campground.findById(req.params.id).populate("comments").exec( function(err, foundCampground) {
         if(err) console.log(err);
-        else res.render("show", {campground: foundCampground});
+        else res.render("campgrounds/show", {campground: foundCampground});
     });
     //Show the information about the ID
 });
+
+// ==============
+// COMMENTS ROUTE
+// ==============
+app.get("/campgrounds/:id/comments/new", function(req, res) {
+    Campground.findById(req.params.id, function(err, campground) {
+        if(err) console.log(err);
+        else {
+            res.render("comments/new", {campground: campground});
+        }
+    });
+});
+
+
+
+
+
+
 
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("The YelpCamp server has started.");

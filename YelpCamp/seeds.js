@@ -1,8 +1,8 @@
 var mongoose = require("mongoose");
 var Campground = require("./models/campground");
 var Comment = require("./models/comment");
-//SEED DATA
-var data = [
+//SEED campground
+var campground = [
     {name: "Clouds Rest",
     image: "http://www.rv-camping.org/images/MiscPhotos/USACECampground.jpg",
     description: "The name is awesome!"},
@@ -21,11 +21,11 @@ function seedDB(){
             console.log(err);
         } else { 
             //ADD NEW CAMPGROUNDS
-            data.forEach(function(seed) {
+            campground.forEach(function(seed) {
                 Campground.create(seed, function(err, campground) {
                     if(err) console.log(err);
                      else { 
-                         console.log("Added campground: " + data.name);
+                         console.log("Added campground: " + campground.name);
                          // Create a comment after creating the campground
                          Comment.create({
                              text: "Seriously needs some internet",
