@@ -1,39 +1,17 @@
 var express     = require("express"),
     app         = express(),
     bodyParser  = require("body-parser"),
-    mongoose    = require("mongoose");
+    mongoose    = require("mongoose"),
+    Campground  = require("./models/campground"),
+    seedDB      = require("./seeds");
 
+//setup the database
 mongoose.connect("mongodb://localhost/yelp_camp");    
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-//create the Schema/Pattern
-var campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description: String
-})
-
-//compile the model 
-var Campground = mongoose.model("Campground", campgroundSchema);
-
-// Campground.create(
-//     {name: "Don Lee", 
-//     image: "https://nccumc.org/files/oh.jpg", 
-//     description: "This is a pretty fun place with many activites and an awesome water slide."},
-//     function(err, campground) {
-//         if(err) console.log(err);
-//         else console.log("new campground " + campground);
-    
-//     });
-
-//Hard-Coded array for earlier application
-//  var campgrounds = [
-//       {name: "Seagull", image: "http://domokur.com/display/images/002043_Seagull--Seafarer-15.jpg"},
-//       {name: "Don Lee", image: "https://nccumc.org/files/oh.jpg"},
-//       {name: "Seafarer", image: "https://s-media-cache-ak0.pinimg.com/originals/84/c1/10/84c110dc06841c3364fc6a1e3f596ecb.jpg"}
-//       ];
-       
+//seed the database with comments:
+seedDB(); //this needs to be first to run after server starts
       
 app.get("/", function(req, res) {
     res.render("landing");
@@ -79,7 +57,7 @@ able to get to it.
 */
 app.get("/campgrounds/:id", function(req, res) {
     //Find the campground with the provided ID.
-    Campground.findById(req.params.id, function(err, foundCampground) {
+    Campground.findById(req.params.id).populate("comments").exec( function(err, foundCampground) {
         if(err) console.log(err);
         else res.render("show", {campground: foundCampground});
     });
