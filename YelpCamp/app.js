@@ -3,7 +3,8 @@ var express     = require("express"),
     bodyParser  = require("body-parser"),
     mongoose    = require("mongoose"),
     Campground  = require("./models/campground"),
-    seedDB      = require("./seeds");
+    seedDB      = require("./seeds"),
+    Comment     = require("./models/comment");
 
 //setup the database
 mongoose.connect("mongodb://localhost/yelp_camp");    
@@ -77,7 +78,26 @@ app.get("/campgrounds/:id/comments/new", function(req, res) {
 });
 
 
-
+//POST ROUTE FOR COMMENTS:
+app.post("/campgrounds/:id/comments", function(req, res) {
+    //lookup campground using ID
+    Campground.findById(req.params.id, function(err, campground) {
+        if(err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        } else {
+            Comment.create(req.body.comment, function(err, comment) {
+                if(err) console.log();
+                else {
+                    //if all good, associate comment to the campground
+                    campground.comments.push(comment);
+                    campground.save();
+                    res.redirect('/campgrounds/' + campground._id);
+                }
+            });
+        }
+    });
+})
 
 
 
