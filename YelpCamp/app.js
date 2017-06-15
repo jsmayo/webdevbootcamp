@@ -10,7 +10,8 @@ var express     = require("express"),
 mongoose.connect("mongodb://localhost/yelp_camp");    
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
-
+//connect  CSS
+app.use(express.static(__dirname + "/public"))
 //seed the database with comments:
 seedDB(); //this needs to be first to run after server starts
       
