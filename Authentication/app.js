@@ -27,12 +27,17 @@ app.use(require("express-session")({
 app.use(passport.initialize());
 app.use(passport.session());
 
+/*
+Create a new local strategy, using the user.authenticate that's 
+coming from mongoose, then telling passport to use that new local
+authenticate.
+*/
+passport.use(new LocalStrategy(User.authenticate()));
 /* User can use the serialize and deserialize methods because 
     I defined them in the user.js file. This way, I can make 
     passport use the same methods for serialize and deserialize 
     that are in user, without having to worry about changing both 
     if needed.  */
-    
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -65,7 +70,7 @@ app.post("/register", function(req, res) {
             return res.render("register");
         }
         //logs user in, takes care of the session and logs all data.
-        //using the local strategy declared in passports api
+        //using the local strategy declared in passport's api and defined as a dependency needed in the above variable definitions of passport.
         //once logged in, the callback starts execution.
         passport.authenticate("local")(req, res, function() {
             res.redirect("/secret");
@@ -74,6 +79,27 @@ app.post("/register", function(req, res) {
     })
 });
 
+// LOGIN ROUTES
+//render login form:
+
+app.get("/login", function(req, res) {
+    res.render("login");
+})
+
+
+//login logic:
+/*
+passport.authenticate is middleware, where it runs in the middle of
+your initial function and the callback. Here, passport.authenticate
+takes the username and passport from the form AUTOMATICALLY. The 
+inputs are compared to the hashed version in the database and 
+either redirects to /secret or /login.
+*/
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/secret",
+    failureRedirect: "/login"
+    }), function(req, res) {
+});
 
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server Started");
