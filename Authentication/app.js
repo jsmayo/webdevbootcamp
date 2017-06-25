@@ -46,7 +46,14 @@ app.get("/", function(req, res) {
     res.render("home");
 });
 
-app.get("/secret", function(req, res) {
+/*
+LOOK AT isLoggedIn definition below:
+ -isLoggedIn() was added as middleware, so when a user
+    attempts to access the /secret route, the function
+    isLoggedIn() runs, and if a TRUE is returned, then the
+    callback is ran as NEXT().
+*/
+app.get("/secret", isLoggedIn, function(req, res) {
     res.render("secret");
 });
 
@@ -100,6 +107,31 @@ app.post("/login", passport.authenticate("local", {
     failureRedirect: "/login"
     }), function(req, res) {
 });
+
+
+app.get("/logout", function(req, res) {
+    //requesting that the server perform a logout
+    //password no longer keeping track of session
+    req.logout();
+    //responding by redirecting to the homepage
+    res.redirect("/")
+});
+
+/*
+- isLogged in is called when the user tries to go to the /secret
+    route. If a true response is returned via PASSWORDs isLoggedIn()
+    method, then the 'next' parameter is ran. 
+- The 'next' is the callback function that's defined inside of 
+    /secret's GET route.
+*/
+function isLoggedIn(req,res,next) {
+    //if authenticated, return the next (middleware) function
+    if(req.isAuthenticated()) return next();
+    //if not logged in, redirect to the login page
+    res.redirect("/login");
+}
+
+
 
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server Started");
