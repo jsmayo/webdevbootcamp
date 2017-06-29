@@ -19,12 +19,12 @@ app.use(express.static(__dirname + "/public"))
 seedDB(); //this needs to be first to run after server starts
    
    
-/*
-----PASSPORT CONFIGURATION:
-   1. Session data will use the object I'm passing in. 
-   2. Resave and Save Unitialized are options that are required.
-----
-*/
+
+//==================================================================
+//                 // PASSPORT CONFIGURATION \\                    =
+//   1. Session data will use the object I'm passing in.           =
+//   2. Resave and Save Unitialized are options that are required. =
+//==================================================================
 app.use(require("express-session")({
     secret: "Once again Rusty wins cutest dog!",
     resave: false,
@@ -38,18 +38,30 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(function(req, res, next) {
+    //pass currentUser to be req.user to EVERY template
+    //whatever is inside of res.locals will be avail to all templates
+    res.locals.currentUser = req.user;
+    //run the next code from middlewear
+    next();
+})
+
 app.get("/", function(req, res) {
     res.render("landing");
 });
 
 
+//==================================================================
+//                  // CAMPGROUNDS ROUTE \\                        =
+//==================================================================
 app.get("/campgrounds", function(req, res) {
+    console.log(req.user);
     // Get all campgrounds from DB
     Campground.find({}, function(err, allCampgrounds) {
         if(err) console.log(err);
-        else res.render("campgrounds/index", {campgrounds: allCampgrounds});
-    })
-})
+        else res.render("campgrounds/index", {campgrounds: allCampgrounds, currentUser: req.user});
+    });
+});
 
 app.get("/campgrounds/new", function(req, res) {
     res.render("campgrounds/new");
@@ -72,14 +84,14 @@ app.post("/campgrounds", function(req, res) {
 })
 
 
-/*
-//============================================
-// SHOW ROUTE
-//============================================
-This route needs to be AFTER the new
-route, since any ID will be routed to this page. Meaning, that if I placed 
-this route before the "new" route and tried to access "new", I wouldn't be
-able to get to it.
+
+//==============================================================
+//                      // SHOW ROUTE \\                       =
+//==============================================================
+/*  This route needs to be AFTER the new
+    route, since any ID will be routed to this page. Meaning, that if I placed 
+    this route before the "new" route and tried to access "new", I wouldn't be
+    able to get to it.
     - Had to delete ALL campgrounds when I added the new description property.
     - db.collection.drop() : removes all data from the collection
 */
@@ -93,9 +105,9 @@ app.get("/campgrounds/:id", function(req, res) {
 });
 
 
-//============================================
-// COMMENTS ROUTE
-//============================================
+//==============================================================
+//                    // COMMENTS ROUTE \\                     =
+//==============================================================
 app.get("/campgrounds/:id/comments/new", isLoggedIn, function(req, res) {
     Campground.findById(req.params.id, function(err, campground) {
         if(err) console.log(err);
@@ -105,8 +117,6 @@ app.get("/campgrounds/:id/comments/new", isLoggedIn, function(req, res) {
     });
 });
 
-
-//POST ROUTE FOR COMMENTS:
 app.post("/campgrounds/:id/comments", isLoggedIn, function(req, res) {
     //lookup campground using ID
     Campground.findById(req.params.id, function(err, campground) {
@@ -128,18 +138,15 @@ app.post("/campgrounds/:id/comments", isLoggedIn, function(req, res) {
 })
 
 
-
-//============================================
-//AUTH ROUTES
-//============================================
-
-
-//SHOW REGISTER FORM
+//==============================================================
+//                  // AUTHENTICATION ROUTE \\                 =
+//==============================================================
+//show register form
 app.get("/register", function(req,res) {
     res.render("register");
 });
 
-//HANDLE SIGN UP LOGIC:
+//handle register logic
 app.post("/register", function(req, res){
     //username from the form
   var newUser = new User({username: req.body.username});
