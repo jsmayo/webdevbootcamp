@@ -45,9 +45,7 @@ function seedDB(){
           
       });
 }
-      
-    
-
+  
 module.exports = seedDB;
 /*
 HOW THIS WORKS:

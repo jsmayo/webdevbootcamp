@@ -14,7 +14,7 @@ router.get("/new", isLoggedIn, function(req, res) {
 });
 
 //Comments create
-router.post("/comments", isLoggedIn, function(req, res) {
+router.post("/", isLoggedIn, function(req, res) {
     //lookup campground using ID
     Campground.findById(req.params.id, function(err, campground) {
         if(err) {
@@ -22,11 +22,17 @@ router.post("/comments", isLoggedIn, function(req, res) {
             res.redirect("/campgrounds");
         } else {
             Comment.create(req.body.comment, function(err, comment) {
-                if(err) console.log();
+                if(err) console.log(err);
                 else {
                     //if all good, associate comment to the campground
+                    //add username and id to author, since that's how I defined the author object
+                    comment.author.id = req.user._id; 
+                    comment.author.username = req.user.username;
+                    //save comment to the database 
+                    comment.save();
                     campground.comments.push(comment);
                     campground.save();
+                    console.log(comment);
                     res.redirect('/campgrounds/' + campground._id);
                 }
             });
