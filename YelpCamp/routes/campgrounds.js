@@ -58,6 +58,14 @@ router.get("/:id", isLoggedIn, function(req, res) {
     //Show the information about the ID
 });
 
+//EDIT CAMPGROUND (FORM FOR SUBMITTING)
+router.get("/:id/edit", function(req, res){ 
+    res.send("edit route");
+})
+//UPDATE CAMPGROUND (FORM TO SUBMIT TO)
+
+
+
 //Middleware
 /*Make sure a user cannot comment if not logged into the site:
   - you can use this anywhere, but I'm placing into comment route*/

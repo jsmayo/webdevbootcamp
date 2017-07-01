@@ -4,6 +4,7 @@ var express         = require("express"),
     mongoose        = require("mongoose"),
     passport        = require("passport"),
     LocalStrategy   = require("passport-local"),
+    methodOverride  = require("method-override"),
     Campground      = require("./models/campground"),
     Comment         = require("./models/comment"),
     User            = require("./models/user"),
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 //connect  CSS
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method")); //telling it to use methodOverride var, which is told to use _method as it's trigger
 //seed the database with comments:
 //seedDB(); //this needs to be first to run after server starts
    
