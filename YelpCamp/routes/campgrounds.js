@@ -59,14 +59,14 @@ router.get("/:id", function(req, res) {
 });
 
 //EDIT CAMPGROUND (FORM FOR SUBMITTING)
-router.get("/:id/edit", function(req, res){ 
+router.get("/:id/edit", checkOwnership, function(req, res){ 
     Campground.findById(req.params.id, function(err, foundCampground) {
-        if(err) res.redirect("/campgrounds");
         res.render("campgrounds/edit", {campground: foundCampground});
     });
 });
+
 //UPDATE CAMPGROUND (FORM TO SUBMIT TO)
-router.put("/:id", function(req, res) {
+router.put("/:id", checkOwnership, function(req, res) {
     //find an update and correct the campground.
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
         if(err) res.redirect("/campgrounds");
@@ -76,13 +76,13 @@ router.put("/:id", function(req, res) {
 });
 
 //DESTROY CAMPGROUND ROUTE
-router.delete("/:id", function(req,res) {
+router.delete("/:id", checkOwnership, function(req,res) {
   Campground.findByIdAndRemove(req.params.id, function(err) {
       if(err){
-          console.log(err);
           res.redirect("/campgrounds");
-      }
+      } else {
       res.redirect("/campgrounds"); //cannot go to show page, bc it should be delted. 
+      }
   });
 });
 
@@ -98,4 +98,22 @@ function isLoggedIn(req, res, next) {
     res.redirect("/login");
 }
 
+function checkOwnership(req, res, next) {
+     if(req.isAuthenticated()) {
+        Campground.findById(req.params.id, function(err, foundCampground) {
+            if(err) { 
+                res.redirect("back");
+            } else {
+             //does user own campground?
+                if(foundCampground.author.id.equals(req.user._id)) {  
+                    next(); //user is authenticated and authorized to edit their post
+                } else {
+                    res.redirect("back"); //takes the user back to the previous page they were on
+                }
+            }
+        });
+    } else {
+        res.redirect("back");
+    }
+}
 module.exports = router;
