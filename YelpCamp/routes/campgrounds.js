@@ -49,7 +49,7 @@ router.post("/", isLoggedIn, function(req, res) {
     - Had to delete ALL campgrounds when I added the new description property.
     - db.collection.drop() : removes all data from the collection
 */
-router.get("/:id", isLoggedIn, function(req, res) {
+router.get("/:id", function(req, res) {
     //Find the campground with the provided ID.
     Campground.findById(req.params.id).populate("comments").exec( function(err, foundCampground) {
         if(err) console.log(err);
@@ -73,7 +73,18 @@ router.put("/:id", function(req, res) {
         res.redirect("/campgrounds/" + req.params.id);
     })
     //redirect to the updated show page
-})
+});
+
+//DESTROY CAMPGROUND ROUTE
+router.delete("/:id", function(req,res) {
+  Campground.findByIdAndRemove(req.params.id, function(err) {
+      if(err){
+          console.log(err);
+          res.redirect("/campgrounds");
+      }
+      res.redirect("/campgrounds"); //cannot go to show page, bc it should be delted. 
+  });
+});
 
 
 //Middleware
