@@ -60,10 +60,20 @@ router.get("/:id", isLoggedIn, function(req, res) {
 
 //EDIT CAMPGROUND (FORM FOR SUBMITTING)
 router.get("/:id/edit", function(req, res){ 
-    res.send("edit route");
-})
+    Campground.findById(req.params.id, function(err, foundCampground) {
+        if(err) res.redirect("/campgrounds");
+        res.render("campgrounds/edit", {campground: foundCampground});
+    });
+});
 //UPDATE CAMPGROUND (FORM TO SUBMIT TO)
-
+router.put("/:id", function(req, res) {
+    //find an update and correct the campground.
+    Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
+        if(err) res.redirect("/campgrounds");
+        res.redirect("/campgrounds/" + req.params.id);
+    })
+    //redirect to the updated show page
+})
 
 
 //Middleware
