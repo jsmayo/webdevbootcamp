@@ -40,6 +40,30 @@ router.post("/", isLoggedIn, function(req, res) {
     });
 });
 
+router.get("/:comment_id/edit", function(req, res){
+    Comment.findById(req.params.comment_id, function(err, foundComment) {
+        if(err) res.redirect("back");
+        else res.render("comments/edit", {campground_id:  req.params.id, comment: foundComment});
+    })
+});
+
+router.put("/:comment_id", function(req, res) {
+    //findByIdAndUpdate(replaceThis, withThis, ThenDoThis)
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+        if(err) res.redirect("back");
+        else res.redirect("/campgrounds/" + req.params.id);
+    });
+});
+
+//COMMENT DESTROY ROUTE
+router.delete("/:comment_id", function(req, res) {
+    //findbyIdAndRemove
+    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if(err) res.redirect("back");
+        else res.redirect("/campgrounds/" + req.params.id);
+    })
+});
+
 //Middleware: refactoring later
 /*Make sure a user cannot comment if not logged into the site:
 - you can use this anywhere, but I'm placing into comment route*/
