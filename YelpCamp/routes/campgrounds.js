@@ -2,6 +2,7 @@
 var express = require("express");
 var router = express.Router();
 var Campground = require("../models/campground");
+var middleware = require("../middleware");
 
 //==================================================================
 //                  // CAMPGROUNDS ROUTE \\                        =
@@ -15,12 +16,12 @@ router.get("/", function(req, res) {
     });
 });
 
-router.get("/new", isLoggedIn, function(req, res) {
+router.get("/new", middleware.isLoggedIn, function(req, res) {
     res.render("campgrounds/new");
 });
 
 
-router.post("/", isLoggedIn, function(req, res) {
+router.post("/", middleware.isLoggedIn, function(req, res) {
    // get data form and add to campgrounds array
     var name = req.body.name;
     var image = req.body.image;
@@ -59,14 +60,14 @@ router.get("/:id", function(req, res) {
 });
 
 //EDIT CAMPGROUND (FORM FOR SUBMITTING)
-router.get("/:id/edit", checkOwnership, function(req, res){ 
+router.get("/:id/edit", middleware.checkOwnership, function(req, res){ 
     Campground.findById(req.params.id, function(err, foundCampground) {
         res.render("campgrounds/edit", {campground: foundCampground});
     });
 });
 
 //UPDATE CAMPGROUND (FORM TO SUBMIT TO)
-router.put("/:id", checkOwnership, function(req, res) {
+router.put("/:id", middleware.checkOwnership, function(req, res) {
     //find an update and correct the campground.
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
         if(err) res.redirect("/campgrounds");
@@ -76,7 +77,7 @@ router.put("/:id", checkOwnership, function(req, res) {
 });
 
 //DESTROY CAMPGROUND ROUTE
-router.delete("/:id", checkOwnership, function(req,res) {
+router.delete("/:id", middleware.checkOwnership, function(req,res) {
   Campground.findByIdAndRemove(req.params.id, function(err) {
       if(err){
           res.redirect("/campgrounds");
@@ -87,33 +88,4 @@ router.delete("/:id", checkOwnership, function(req,res) {
 });
 
 
-//Middleware
-/*Make sure a user cannot comment if not logged into the site:
-  - you can use this anywhere, but I'm placing into comment route*/
-function isLoggedIn(req, res, next) {
-    if(req.isAuthenticated()){
-        return next(); //run the next function defined after the middleware
-    }
-     // make the user login if not authenticated
-    res.redirect("/login");
-}
-
-function checkOwnership(req, res, next) {
-     if(req.isAuthenticated()) {
-        Campground.findById(req.params.id, function(err, foundCampground) {
-            if(err) { 
-                res.redirect("back");
-            } else {
-             //does user own campground?
-                if(foundCampground.author.id.equals(req.user._id)) {  
-                    next(); //user is authenticated and authorized to edit their post
-                } else {
-                    res.redirect("back"); //takes the user back to the previous page they were on
-                }
-            }
-        });
-    } else {
-        res.redirect("back");
-    }
-}
 module.exports = router;
