@@ -51,6 +51,7 @@ middlewareObj.isLoggedIn = function(req, res, next) {
         return next(); //run the next function defined after the middleware
     }
      // make the user login if not authenticated
+    req.flash("error", "Please Login First");
     res.redirect("/login");
 };
 

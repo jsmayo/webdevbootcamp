@@ -8,7 +8,8 @@ var express         = require("express"),
     Campground      = require("./models/campground"),
     Comment         = require("./models/comment"),
     User            = require("./models/user"),
-    seedDB          = require("./seeds");
+    seedDB          = require("./seeds"),
+    flash           = require("connect-flash");
 
 //Requiring routes
 var commentRoutes       = require("./routes/comments"),
@@ -23,6 +24,8 @@ app.set("view engine", "ejs");
 //connect  CSS
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method")); //telling it to use methodOverride var, which is told to use _method as it's trigger
+app.use(flash());
+
 //seed the database with comments:
 //seedDB(); //this needs to be first to run after server starts
    
