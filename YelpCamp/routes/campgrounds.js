@@ -24,12 +24,13 @@ router.get("/new", middleware.isLoggedIn, function(req, res) {
 router.post("/", middleware.isLoggedIn, function(req, res) {
    // get data form and add to campgrounds array
     var name = req.body.name;
+    var price = req.body.price;
     var image = req.body.image;
     var desc = req.body.description;
     var author = {
         id: req.user._id,
         username: req.user.username };
-    var newCampground = {name: name, image: image, description: desc, author: author};
+    var newCampground = {name: name, price:price, image: image, description: desc, author: author};
     
     //use the above variables to create an object and add it to the DB.
    Campground.create(newCampground, function(err, newlyCreated) {
@@ -82,6 +83,7 @@ router.delete("/:id", middleware.checkOwnership, function(req,res) {
       if(err){
           res.redirect("/campgrounds");
       } else {
+      req.flash("success", "Comment deleted successfully.");
       res.redirect("/campgrounds"); //cannot go to show page, bc it should be delted. 
       }
   });

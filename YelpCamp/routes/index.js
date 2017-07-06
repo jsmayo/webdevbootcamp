@@ -23,12 +23,13 @@ router.post("/register", function(req, res){
   User.register(newUser, req.body.password, function(err, user) {
       //log the error if encountered and redirect back to register form
       if(err) {
-         console.log(err);
+         req.flash("error", err.message); //flash the error itself to the user
           //using RETURN to easily break out of this block
          return res.render("register");
       }
       //log into passport if registration was successful and redirect to campgrounds route
       passport.authenticate("local")(req, res, function() {
+          req.flash("success", "Welcome to YelpCamp " + user.username);
           res.redirect("/campgrounds");
       });
   });
@@ -57,18 +58,9 @@ router.post("/login", passport.authenticate("local",
 //handle LOGOUT logic
 router.get("/logout", function(req, res){
     req.logout(); //destroy session data
+    req.flash("error", "Logged you out");
     res.redirect("/campgrounds");
 });
 
-//Middleware
-/*Make sure a user cannot comment if not logged into the site:
-  - you can use this anywhere, but I'm placing into comment route*/
-function isLoggedIn(req, res, next) {
-    if(req.isAuthenticated()){
-        return next(); //run the next function defined after the middleware
-    }
-     // make the user login if not authenticated
-    res.redirect("/login");
-}
 
 module.exports = router;

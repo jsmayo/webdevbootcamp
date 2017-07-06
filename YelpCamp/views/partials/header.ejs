@@ -25,3 +25,17 @@
         </div>
     </div>
 </nav>
+<!-- keep the flash message from going across the whole screen -->
+<div class = "container">
+    <!-- Need both, b/c error would return true regardless, since it's empty by default-->
+    <% if(error && error.length > 0) { %>
+        <div class = "alert alert-danger" role="alert">
+            <%= error %>
+        </div>
+    <% } %>
+    <% if(error && error.length > 0) { %>
+        <div class = "alert alert-success" role="alert">
+            <%= success %>
+        </div>
+     <% } %>
+</div>

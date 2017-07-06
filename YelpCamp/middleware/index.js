@@ -12,17 +12,20 @@ middlewareObj.checkOwnership = function (req, res, next) {
      if(req.isAuthenticated()) {
         Campground.findById(req.params.id, function(err, foundCampground) {
             if(err) { 
+                req.flash("error", "Campground not found.");
                 res.redirect("back");
             } else {
              //does user own campground?
                 if(foundCampground.author.id.equals(req.user._id)) {  
                     next(); //user is authenticated and authorized to edit their post
                 } else {
+                    req.flash("error", "You don't have permission to do that.");
                     res.redirect("back"); //takes the user back to the previous page they were on
                 }
             }
         });
     } else {
+        res.flash("error", "You need to be logged in to do that.");
         res.redirect("back");
     }
 }  ;
@@ -31,12 +34,14 @@ middlewareObj.checkCommentOwnership = function(req, res, next) {
      if(req.isAuthenticated()) {
         Comment.findById(req.params.comment_id, function(err, foundComment) {
             if(err) { 
+                req.flash("error", "You must be logged in to do that.");
                 res.redirect("back");
             } else {
              //does user own campground?
                 if(foundComment.author.id.equals(req.user._id)) {  
                     next(); //user is authenticated and authorized to edit their post
                 } else {
+                    req.flash("error", "You don't have permission to do that");
                     res.redirect("back"); //takes the user back to the previous page they were on
                 }
             }

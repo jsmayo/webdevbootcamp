@@ -53,6 +53,9 @@ app.use(function(req, res, next) {
     //pass currentUser to be req.user to EVERY template
     //whatever is inside of res.locals will be avail to all templates
     res.locals.currentUser = req.user;
+    // pass the fail and success messages to ALL templates, so I can use it on any page
+    res.locals.error = req.flash("error"); 
+    res.locals.success = req.flash("success");
     //run the next code from middlewear
     next();
 });
