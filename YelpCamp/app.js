@@ -22,7 +22,7 @@ console.log(url);
 //setup the database
 mongoose.connect(process.env.DATABASEURL);
 // mongoose.connect("mongodb://localhost/yelp_camp"); 
-// mongoose.connect("mongodb://steven:figfig@ds151702.mlab.com:51702/yelpcamp");
+// mongoose.connect("mh");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 //connect  CSS
